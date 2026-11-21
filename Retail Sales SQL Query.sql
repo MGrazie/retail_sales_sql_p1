@@ -29,7 +29,7 @@ CREATE TABLE retail_sales
 SELECT * FROM retail_sales
 LIMIT 10;
 
--- Check total number of rows by using SELECT COUNT(*) Countercheck with excel
+-- Check total number of rows using SELECT COUNT(*) Countercheck with excel
 SELECT COUNT(*) FROM retail_sales;
 
 -- Rename column "quantiy" to "quantity"
@@ -64,8 +64,8 @@ WHERE
 	total_sale IS NULL;
 
 -- Identified 13 rows with missing records for all 5 columns(quantity, price_per_unit, age, cogs & total_sale)
--- Solution is to DELETE the 13 rows. No much effect on the 2000 records.
--- Use DELETE FROM with WHERE condition for the IS NULL rows
+-- Solution is to DELETE the 13 rows. Not much effect on the 2000 records.
+-- Use DELETE FROM with a WHERE condition for the IS NULL rows
 DELETE FROM retail_sales
 WHERE
 	transactions_id IS NULL
@@ -94,7 +94,7 @@ WHERE
 SELECT COUNT(*) FROM retail_sales;
 -- 1987 records left
 
--- Check the null records again to confirm no null record is left
+-- Check the null records again to confirm no null records are left
 SELECT * FROM retail_sales
 WHERE
 	transactions_id IS NULL
@@ -118,12 +118,12 @@ WHERE
 	cogs IS NULL
 	OR
 	total_sale IS NULL;
--- No empty record left
+-- No empty records left
 
 -- STEP 4: DATA EXPLORATION
 
--- How many total sales we have? Transaction IDs are unique so we are counting the number of rows: COUNT(*)
--- AS is an alias, a temporary column name that is shown only on the output of that code
+-- How many total sales do we have? Transaction IDs are unique, so we are counting the number of rows: COUNT(*)
+-- AS is an alias, a temporary column name that is shown only in the output of that code
 SELECT COUNT(*) as total_sales FROM retail_sales;
 -- This shows 1987 total sales
 
@@ -134,13 +134,13 @@ FROM retail_sales
 GROUP BY 1;
 -- We have 306 customers
 
--- Which categories do we have? (Gives the category names while using count gives us 3)
+-- Which categories do we have? (Gives the category names; using COUNT gives us 3)
 SELECT DISTINCT category as total_categories FROM retail_sales;
 
 -- STEP 5: DATA ANALYSIS & BUSINESS KEY PROBLEMS AND ANSWERS
 
 -- Q1: Retrieve all columns for sales made on '2022-11-05'
--- Using SELECT and WHERE. The date is inside single quotations
+-- Using SELECT and WHERE. The date is inside single quotes
 SELECT * FROM retail_sales
 WHERE sale_date = '2022-11-05';
 
@@ -160,14 +160,14 @@ FROM retail_sales
 WHERE sale_date = '2022-11-05'
 GROUP BY 1,2;
 
--- We can also find the total number of sales as per gender on this date
+-- We can also find the total number of sales by gender on this date
 SELECT gender, COUNT(customer_id) AS total_customers
 FROM retail_sales
 WHERE sale_date = '2022-11-05'
 GROUP BY 1;
 
 -- Q2: Retrieve all the transactions where category is 'Clothing' and the quantity sold is more than 2 in the month of Nov-2022
--- To retrieve all sales for a specific month we use TO_CHAR() to convert date to text as specified 'YYYY-MM' for comparison.
+-- To retrieve all sales for a specific month, we use TO_CHAR() to convert date to text as specified 'YYYY-MM' for comparison.
 -- 'YYYY-MM' converts the date to just the year and month and then compares the date with the condition '2022-11'
 SELECT * FROM retail_sales
 WHERE
@@ -203,13 +203,19 @@ FROM retail_sales
 WHERE category = 'Beauty'
 GROUP BY 1;
 
+-- Using ROUND()
+SELECT category, ROUND(AVG(age), 2) as avg_age
+FROM retail_sales
+WHERE category = 'Beauty'
+GROUP BY 1;
+
 -- Average age for all categories
 SELECT category, AVG(age) as avg_age
 FROM retail_sales
 GROUP BY 1;
 
--- Using ROUND() to roundoff the age. The format includes 2 elements(a,b). 
--- a is the variable you want to roundoff, b is the decimal place yu want to roundoff to
+-- Using ROUND() to round off the age. The format includes 2 elements(a,b). 
+-- a is the variable you want to round off, b is the decimal place you want to round off to
 SELECT category, ROUND(AVG(age), 0) as avg_age
 FROM retail_sales
 GROUP BY category;
@@ -256,10 +262,10 @@ FROM retail_sales
 GROUP BY 1,2
 ORDER BY 2;
 
--- Q7: Calculate the average sale for each month. Find out best selling month in each year
+-- Q7: Calculate the average sale for each month. Find the best-selling month in each year
 -- To get the year and months we use the EXTRACT() function which will extract year and month from the sale_date column
 -- Format is EXTRACT(a FROM b) as c: a is the data you want to get, b is the column you're getting the data from, c is the new column name in the output
--- First we calculate the sum/total sales per month
+-- First, we calculate the sum/total sales per month
 SELECT 
 	EXTRACT(YEAR FROM sale_date) as year, 
 	EXTRACT(MONTH FROM sale_date) as month, 
@@ -277,8 +283,8 @@ FROM retail_sales
 GROUP BY 1,2
 ORDER BY 1,2;
 
--- Rounding off a double precision column like total_sale. 
--- Postgre does not require the second element which specifies the decimal point to which you want to roundoff 
+-- Rounding off a double-precision column like total_sale. 
+-- Postgre does not require the second element which specifies the decimal place to which you want to roundoff 
 SELECT 
 	EXTRACT(YEAR FROM sale_date) as year, 
 	EXTRACT(MONTH FROM sale_date) as month, 
@@ -287,7 +293,7 @@ FROM retail_sales
 GROUP BY 1,2
 ORDER BY 1,2;
 
--- To roundoff and specify to which decimal point for a float column we use ::NUMERIC
+-- To round off and specify to which decimal point for a float column, we use ::NUMERIC
 SELECT 
 	EXTRACT(YEAR FROM sale_date) as year, 
 	EXTRACT(MONTH FROM sale_date) as month, 
@@ -297,7 +303,7 @@ GROUP BY 1,2
 ORDER BY 1,2;
 
 -- We can order by 3 to arrange the avg_sales in ascending/descending order
--- We remove order by 2
+-- We remove ORDER BY 2
 SELECT 
 	EXTRACT(YEAR FROM sale_date) as year, 
 	EXTRACT(MONTH FROM sale_date) as month, 
@@ -306,7 +312,7 @@ FROM retail_sales
 GROUP BY 1,2
 ORDER BY 1,3 DESC;
 
--- We can use RANK(). We don't use aliases inside the rank function. More practice & understanding needed.
+-- We can use RANK(). We don't use aliases inside the RANK () function. More practice & understanding needed.
 SELECT 
 	EXTRACT(YEAR FROM sale_date) as year, 
 	EXTRACT(MONTH FROM sale_date) as month, 
@@ -318,7 +324,7 @@ SELECT
 FROM retail_sales
 GROUP BY 1,2;
 
--- We can filter the above table to obtain the month with most sales for each month by:
+-- We can filter the above table to obtain the month with the most sales for each month by:
 SELECT * FROM
 (
 	SELECT 
@@ -334,7 +340,7 @@ SELECT * FROM
 ) 
 WHERE sales_rank = 1;
 
--- we can omit the rank column in this by specifying the columns to display
+-- We can omit the rank column in this by specifying the columns to display
 SELECT year, month, avg_sale FROM
 (
 	SELECT 
@@ -351,12 +357,12 @@ SELECT year, month, avg_sale FROM
 WHERE sales_rank = 1;
 
 -- Q8: Find the top 5 customers based on the highest total sales
--- First understand the dataset
+-- First, understand the dataset
 -- How many customers(customer_id) do we have?(306)
 SELECT customer_id, gender 
 FROM retail_sales
 GROUP BY 1,2;
--- We notice that the customer_id is allocated as per the customer gender
+-- We notice that the customer_id is allocated as per the customer's gender
 -- Therefore, customer_id 1 is allocated twice. Male and Female.
 
 -- Each customer with their total sales
@@ -369,7 +375,8 @@ ORDER BY 1;
 SELECT customer_id, gender, SUM(total_sale) as total_sales 
 FROM retail_sales
 GROUP BY 1,2
-ORDER BY 3 DESC;
+ORDER BY 3 DESC
+LIMIT 5;
 -- Customer 3(male) has the highest total sales, customer_id 125(female) has the lowest total sales
 
 
@@ -379,35 +386,27 @@ FROM retail_sales
 GROUP BY 1,2;
 
 -- Q10: CREATE each shift and number of orders(Example Morning <=12, Afternoon Between 12 and 17, Evening >17)
--- Check time formart
+-- Check time format
 SELECT sale_time FROM retail_sales;
 
 -- Use of segmentation
 -- We use CASE, WHEN...THEN, ELSE & END...
+-- Create each shift using the time boundaries correctly:
 SELECT *,
-	CASE
-		WHEN sale_time <= '12:00:00' THEN 'Morning'
-		WHEN sale_time BETWEEN '12:00:00' AND '17:00:00' THEN 'Afternoon'
-		ELSE 'Evening'
-	END as shift
+    CASE
+        WHEN sale_time < '12:00:00' THEN 'Morning'
+        WHEN sale_time < '17:00:00' THEN 'Afternoon'
+        ELSE 'Evening'
+    END AS shift
 FROM retail_sales;
 
--- Another way of doing it using EXTRACT()
-SELECT *,
-	CASE
-		WHEN EXTRACT(HOUR FROM sale_time) <= 12 THEN 'Morning'
-		WHEN EXTRACT(HOUR FROM sale_time) BETWEEN 12 AND 17 THEN 'Afternoon'
-		ELSE 'Evening'
-	END as shift
-FROM retail_sales;
-
--- Can we check total number of transactions in each shift? YES!
+-- Can we check total sales and number of transactions in each shift? YES!
 SELECT shift, SUM(total_sale) as total_sales, COUNT(*) as total_transactions FROM
 (
 SELECT *,
 	CASE
-		WHEN EXTRACT(HOUR FROM sale_time) <= 12 THEN 'Morning'
-		WHEN EXTRACT(HOUR FROM sale_time) BETWEEN 12 AND 17 THEN 'Afternoon'
+		WHEN sale_time < '12:00:00' THEN 'Morning'
+		WHEN sale_time < '17:00:00' THEN 'Afternoon'
 		ELSE 'Evening'
 	END as shift
 FROM retail_sales
